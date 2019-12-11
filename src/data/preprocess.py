@@ -19,6 +19,15 @@ def read_csv_from_drive(url):
     return df
 
 
+def get_dist(df, col):
+    df_cnt = df.groupby(
+        [col]+['rating'])['time'].count().unstack(1, fill_value=0)
+    df_dist = pd.DataFrame(df_cnt.values / df_cnt.sum(1).values.reshape(-1, 1),
+                           columns=df_cnt.columns,
+                           index=df_cnt.index)
+    return df_dist
+
+
 if __name__ == '__main__':
     network_df = read_csv_from_drive(
         'https://drive.google.com/uc?id=1przExqwz7QSUCyqSsgez6glA6kaEMQix')
