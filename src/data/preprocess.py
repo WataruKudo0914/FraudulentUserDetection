@@ -13,7 +13,7 @@ def main():
     # amazon
     amazon.main()
     # epinions
-    epinipons.main()
+    epinions.main()
     # amazon_electronics
     amazon_extra.main('amazon_electronics')
     # amazon_sports
