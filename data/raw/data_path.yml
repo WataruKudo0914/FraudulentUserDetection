@@ -10,3 +10,9 @@ otc:
 epinions:
   gt: https://drive.google.com/uc?id=1UoNPlgVzMr3kMamlZJFpardO0hrw75lc
   network: https://drive.google.com/uc?id=1ULkhDwpL1TMSmeUhYOb9SXK45Hs2p2uU
+amazon_electronics:
+  file_path: 'http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_Electronics_5.json.gz'
+amazon_baby:
+  file_path: 'http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_Baby_5.json.gz'
+amazon_sports:
+  file_path: 'http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_Sports_and_Outdoors_5.json.gz'
