@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from src.data.preprocess import parse_data_path, get_dist
+from src.data.utils import parse_data_path, get_dist
 from pathlib import Path
 from sklearn.preprocessing import LabelEncoder
 
