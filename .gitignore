@@ -1,0 +1,6 @@
+reports/figure/*
+.vscode/settings.json
+.python-version
+.vscode/launch.json
+*.cpython-37.pyc
+data/processed/*/*
