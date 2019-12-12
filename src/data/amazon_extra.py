@@ -13,8 +13,8 @@ def main(data_name):
         output_dir.mkdir()
     # raw_network置き場
     raw_network_dir = Path('./data/raw/') / data_name
-    if not output_dir.exists():
-        output_dir.mkdir()
+    if not raw_network_dir.exists():
+        raw_network_dir.mkdir()
     # 処理
     file_path = data_path_dict['file_path']
     review_df_raw = pd.read_json(file_path, lines=True)

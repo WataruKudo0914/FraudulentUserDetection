@@ -14,8 +14,8 @@ def main():
         output_dir.mkdir()
     # raw_network置き場
     raw_network_dir = Path('./data/raw/') / data_name
-    if not output_dir.exists():
-        output_dir.mkdir()
+    if not raw_network_dir.exists():
+        raw_network_dir.mkdir()
     # ラベル
     gt_df = pd.read_csv(data_path_dict['gt'], header=None)
     gt_df.columns = ['user_id', 'label']
