@@ -12,6 +12,10 @@ def main(data_name):
     output_dir = Path('./data/processed/') / data_name
     if not output_dir.exists():
         output_dir.mkdir()
+    # raw_network置き場
+    raw_network_dir = Path('./data/raw/') / data_name
+    if not output_dir.exists():
+        output_dir.mkdir()
     # ラベル
     gt_df = pd.read_csv(data_path_dict['gt'], header=None)
     gt_df.columns = ['user_id', 'label']
@@ -19,6 +23,7 @@ def main(data_name):
     network_df = pd.read_csv(data_path_dict['network'], header=None)
     network_df.columns = ['id1', 'id2', 'rating', 'time']
     network_df['weight'] = network_df.rating.map(lambda x: 1 if x > 0 else -1)
+    network_df.to_csv(raw_network_dir / 'network.csv')
     # id変換
     label_encoder = LabelEncoder()
     label_encoder.fit(np.hstack((network_df.id1,

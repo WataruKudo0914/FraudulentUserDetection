@@ -12,6 +12,10 @@ def main():
     output_dir = Path('./data/processed/') / data_name
     if not output_dir.exists():
         output_dir.mkdir()
+    # raw_network置き場
+    raw_network_dir = Path('./data/raw/') / data_name
+    if not output_dir.exists():
+        output_dir.mkdir()
     # ラベル
     gt_df = pd.read_csv(data_path_dict['gt'], header=None)
     gt_df.columns = ['user_id', 'label']
@@ -19,6 +23,7 @@ def main():
     network_df = pd.read_csv(data_path_dict['network'], header=None)
     network_df.columns = ['user_id', 'product_id', 'rating', 'time']
     network_df['weight'] = network_df.rating.map(lambda x: (x-3)/2).round()
+    network_df.to_csv(raw_network_dir / 'network.csv')
     # rating==3を除外する
     truncated_network = network_df.loc[network_df.weight != 0, [
         'user_id', 'product_id', 'weight']]

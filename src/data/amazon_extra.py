@@ -11,6 +11,10 @@ def main(data_name):
     output_dir = Path('./data/processed/') / data_name
     if not output_dir.exists():
         output_dir.mkdir()
+    # raw_network置き場
+    raw_network_dir = Path('./data/raw/') / data_name
+    if not output_dir.exists():
+        output_dir.mkdir()
     # 処理
     file_path = data_path_dict['file_path']
     review_df_raw = pd.read_json(file_path, lines=True)
@@ -19,6 +23,7 @@ def main(data_name):
     network_df = generate_network_csv(review_df, pd.Timestamp(2013, 1, 1))
     network_df.columns = ['user_id', 'product_id', 'rating', 'time']
     network_df['weight'] = network_df.rating.map(lambda x: (x-3)/2).round()
+    network_df.to_csv(raw_network_dir / 'network.csv')
     gt_df = generate_gt(review_df, pd.Timestamp(2013, 1, 1))
     gt_df.columns = ['user_id', 'label']
     # rating==3を除外する

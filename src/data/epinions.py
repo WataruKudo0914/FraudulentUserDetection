@@ -12,11 +12,16 @@ def main():
     output_dir = Path('./data/processed/') / data_name
     if not output_dir.exists():
         output_dir.mkdir()
+    # raw_network置き場
+    raw_network_dir = Path('./data/raw/') / data_name
+    if not output_dir.exists():
+        output_dir.mkdir()
     # ラベル
     gt_df = pd.read_csv(data_path_dict['gt'], header=None)
     gt_df.columns = ['user_id', 'label']
     # network
     network_df = pd.read_csv(data_path_dict['network'])
+    network_df.to_csv(raw_network_dir / 'network.csv')
     network_df, gt_df, label_encoder, node_features_df = convert_to_input(
         network_df, gt_df
     )
