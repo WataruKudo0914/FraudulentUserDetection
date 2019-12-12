@@ -4,3 +4,5 @@ reports/figure/*
 .vscode/launch.json
 *.cpython-37.pyc
 data/processed/*/*
+data/intermediate/*
+!.gitkeep
