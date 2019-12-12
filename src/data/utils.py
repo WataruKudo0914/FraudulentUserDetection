@@ -17,6 +17,15 @@ def read_csv_from_drive(url):
 
 
 def get_dist(df, col):
+    """評価ネットワークからノード特徴量を作る
+
+    Arguments:
+        df {pd.DataFrame}
+        col {str}
+
+    Returns:
+        pd.DataFrame
+    """
     df_cnt = df.groupby(
         [col]+['rating'])['time'].count().unstack(1, fill_value=0)
     df_dist = pd.DataFrame(df_cnt.values / df_cnt.sum(1).values.reshape(-1, 1),

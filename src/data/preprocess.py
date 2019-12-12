@@ -6,6 +6,10 @@ from src.data import alpha_otc, amazon, epinions, amazon_extra
 
 
 def main():
+    """
+    生の評価ネットワークデータ(./data/raw/)
+    -> signed network & labels & node features (./data/processed/<data_name>/)
+    """
     # alpha
     alpha_otc.main('alpha')
     # otc
@@ -18,7 +22,6 @@ def main():
     amazon_extra.main('amazon_electronics')
     # amazon_sports
     amazon_extra.main('amazon_sports')
-    pass
 
 
 if __name__ == '__main__':
