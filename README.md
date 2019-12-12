@@ -1,7 +1,7 @@
 # Fraudulent User Detection
 
 ## データ前処理(生の評価ネットワーク -> signed network & ラベル & ノード特徴量)
-``` python -m src.data.preprocess.main ```
+``` python -m src.data.preprocess ```
 
 ## フォルダ構成
 ```

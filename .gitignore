@@ -5,4 +5,5 @@ reports/figure/*
 *.cpython-37.pyc
 data/processed/*/*
 data/intermediate/*
+data/raw/*/*
 !.gitkeep
