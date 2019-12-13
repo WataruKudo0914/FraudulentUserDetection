@@ -6,4 +6,6 @@ reports/figure/*
 data/processed/*/*
 data/intermediate/*
 data/raw/*/*
+src/models/_sgcns
+
 !.gitkeep
