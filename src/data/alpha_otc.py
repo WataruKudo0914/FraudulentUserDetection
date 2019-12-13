@@ -19,6 +19,7 @@ def main(data_name):
     # ラベル
     gt_df = pd.read_csv(data_path_dict['gt'], header=None)
     gt_df.columns = ['user_id', 'label']
+    gt_df.to_csv(raw_network_dir / 'gt.csv')
     # network
     network_df = pd.read_csv(data_path_dict['network'], header=None)
     network_df.columns = ['id1', 'id2', 'rating', 'time']

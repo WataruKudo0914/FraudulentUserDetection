@@ -26,6 +26,7 @@ def main(data_name):
     network_df.to_csv(raw_network_dir / 'network.csv')
     gt_df = generate_gt(review_df, pd.Timestamp(2013, 1, 1))
     gt_df.columns = ['user_id', 'label']
+    gt_df.to_csv(raw_network_dir / 'gt.csv')
     # rating==3を除外する
     truncated_network = network_df.loc[network_df.weight != 0, [
         'user_id', 'product_id', 'weight']]
