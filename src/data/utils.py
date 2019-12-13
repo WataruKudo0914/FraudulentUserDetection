@@ -16,7 +16,7 @@ def read_csv_from_drive(url):
     return df
 
 
-def get_dist(df, col):
+def get_dist(df, col, rating_cols=None):
     """評価ネットワークからノード特徴量を作る
 
     Arguments:
@@ -31,4 +31,7 @@ def get_dist(df, col):
     df_dist = pd.DataFrame(df_cnt.values / df_cnt.sum(1).values.reshape(-1, 1),
                            columns=df_cnt.columns,
                            index=df_cnt.index)
+    if rating_cols is not None:
+        df_dist = pd.concat(
+            [pd.DataFrame(columns=rating_cols), df_dist]).fillna(0)
     return df_dist
