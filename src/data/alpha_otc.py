@@ -36,7 +36,7 @@ def main(data_name):
     node_features_df = pd.concat([get_dist(network_df, 'id1_'), get_dist(
         network_df, 'id2_')], 1).fillna(0).sort_index()
     # 出力
-    network_df[['id1', 'id2', 'weight']].to_csv(
+    network_df[['id1_', 'id2_', 'weight']].to_csv(
         output_dir / 'network.csv', index=None)
     gt_df[['node_id', 'label']].to_csv(
         output_dir / 'gt.csv', index=None)

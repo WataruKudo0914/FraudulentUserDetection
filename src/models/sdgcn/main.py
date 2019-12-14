@@ -48,7 +48,6 @@ def ten_fold_cv(data_name):
         predictions = np.dot(test_feature, weight.values.T)
         probabilities = torch.sigmoid(torch.from_numpy(predictions)).numpy()
         predict_labels = (probabilities >= 0.5).astype(int)
-        # auc_score = roc_auc_score(y_true=[1 if i==-1 else 0 for i in test_node_labels],y_score=probabilities[:,1])
         auc_score = roc_auc_score(
             y_true=[1 if i == -1 else 0 for i in test_node_labels], y_score=probabilities)
         auc_scores.append(auc_score)
@@ -66,4 +65,4 @@ def ten_fold_cv(data_name):
 
 
 if __name__ == '__main__':
-    ten_fold_cv('alpha')
+    ten_fold_cv('otc')

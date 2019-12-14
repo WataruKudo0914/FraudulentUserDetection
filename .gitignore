@@ -7,5 +7,6 @@ data/processed/*/*
 data/intermediate/*
 data/raw/*/*
 src/models/_sgcns
+*.pyc
 
 !.gitkeep
