@@ -11,6 +11,7 @@
 from src.arg_parser import get_parser
 from src.models import sdgcn, sgcn, rev2, rgcn
 from pathlib import Path
+import json
 
 parser = get_parser()
 args = parser.parse_args()
@@ -35,25 +36,32 @@ result_dir.mkdir(parents=True, exist_ok=True)
 """
 実験1
 """
-# model.ten_fold_cv(args.data_name)
+average_auc = model.ten_fold_cv(args.data_name)
+with open(result_dir / 'exp1.json') as f:
+    json.dump({'auc': average_auc}, f)
 
 """
 実験2
 """
-# exp2_result_df = model.robustness_experiments(
-#     args.data_name,
-#     training_rates_list=[0.03]
-# )
-# exp2_result_df.to_csv(result_dir / 'exp2.csv')
+exp2_result_df = model.robustness_experiments(
+    args.data_name,
+    training_rates_list=[0.03]
+)
+exp2_result_df.to_csv(result_dir / 'exp2.csv')
 
 """
 実験3
 """
-# exp3_result_df = model.robustness_experiments(
-#     args.data_name,
-#     training_rates_list=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-# )
-# exp3_result_df.to_csv(result_dir / 'exp3.csv')
+exp3_result_df = model.robustness_experiments(
+    args.data_name,
+    training_rates_list=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+)
+exp3_result_df.to_csv(result_dir / 'exp3.csv')
 """
 実験4
 """
+exp4_result_df = model.inductive_learning_eval(
+    args.data_name,
+    iter_num=3
+)
+exp4_result_df.to_csv(result_dir / 'exp4.csv')

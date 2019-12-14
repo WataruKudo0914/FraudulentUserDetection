@@ -1,10 +1,10 @@
-from src.models.sdgcn.utils import read_graph, save_logs
+from src.models.sdgcn.utils import read_graph
 from .args_getter import get_args
 from sklearn.model_selection import StratifiedKFold, train_test_split
 import numpy as np
 import pandas as pd
 from sklearn.metrics import roc_auc_score, confusion_matrix
-from src.models.sdgcn.trainer import SignedGCNTrainer
+from src.models.sdgcn.trainer import SignedGCNTrainer, SignedGCNPredictor
 import torch
 from pathlib import Path
 
@@ -65,7 +65,7 @@ def ten_fold_cv(data_name):
 def robustness_experiments(
         data_name,
         training_rates_list=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
-        iter_num=10):
+        iter_num=30):
     args = get_args(data_name, rate=None)
     edges, nodes_dict = read_graph(args)
     all_indice = nodes_dict['indice']
@@ -123,6 +123,71 @@ def robustness_experiments(
         result_df = pd.DataFrame(
             all_auc_scores, index=done_train_rate, columns=['average_auc'])
     return result_df
+
+
+def inductive_learning_eval(data_name, rate_list=[0.1, 0.2, 0.3], iter_num=30):
+    rate_list = [0.1, 0.2, 0.3]
+    _train_all(data_name, rate_list, iter_num=iter_num)
+    new_args = get_args(data_name)
+    result_df, true_pred_dict = _eval_all(
+        data_name, rate_list, new_args, iter_num=iter_num)
+    return result_df
+
+
+def _train_all(data_name, rate_list, l1_lambda=0.0, l2_lambda=10e-4, iter_num=30):
+    for rate in rate_list:
+        for i in range(iter_num):
+            print(f'{i}-th iteration')
+            inductive_model_path = Path(
+                './models/sdgcn/') / f'{data_name}_{rate}_{i}th'
+            args = get_args(data_name, rate=rate,
+                            inductive_model_path=inductive_model_path,
+                            l1_lambda=1.0)
+            edges, nodes_dict = read_graph(args)
+            print(np.unique(nodes_dict['label'], return_counts=True))
+            trainer = SignedGCNTrainer(args, edges, nodes_dict)
+            trainer.setup_dataset()
+            trainer.create_and_train_model()
+
+
+def _eval_all(data_name, rate_list, new_args, iter_num=30):
+    new_edges, new_nodes_dict = read_graph(new_args)
+    X = np.array(pd.read_csv(new_args.features_path))
+    result_df = pd.DataFrame()
+    true_pred_dict = {}
+    for rate in rate_list:
+        auc_scores = []
+        bagging_pred_scores = []
+        for i in range(iter_num):
+            inductive_model_path = Path(
+                './models/sdgcn/') / f'{data_name}_{rate}_{i}th'
+            predictor = SignedGCNPredictor(
+                new_args,
+                inductive_model_path,
+                X, new_edges, new_nodes_dict)
+            predictions = predictor.predict()
+            trained_node_raw = np.load(
+                f'./data/processed/early/{data_name}_{rate}/label_encoder.npy')
+            newly_added_node_judger = ~np.isin(
+                new_nodes_dict['indice'], trained_node_raw)
+            y_true = new_nodes_dict['label'][newly_added_node_judger]
+            y_score_indice = new_nodes_dict['indice'][newly_added_node_judger]
+            bagging_pred_scores.append(predictions[y_score_indice])
+
+            current_auc = roc_auc_score(
+                y_true=[1 if i == -1 else 0 for i in y_true], y_score=predictions[y_score_indice])
+            auc_scores.append(current_auc)
+        averaged_auc = np.mean(auc_scores)
+        result_df = result_df.append(pd.io.json.json_normalize(
+            {f'{data_name}_{rate}': averaged_auc}).T)
+
+        bagging_pred_score = sum(bagging_pred_scores)/iter_num
+        tmp_df = pd.DataFrame()
+        tmp_df['indice'] = y_score_indice
+        tmp_df['true_label'] = [1 if i == -1 else 0 for i in y_true]
+        tmp_df['pred_score'] = bagging_pred_score
+        true_pred_dict[(data_name, rate)] = tmp_df
+    return result_df, true_pred_dict
 
 
 if __name__ == '__main__':

@@ -9,4 +9,5 @@ data/raw/*/*
 src/models/_sgcns
 *.pyc
 *.log
+models/*
 !.gitkeep

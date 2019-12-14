@@ -2,7 +2,7 @@ import easydict
 from pathlib import Path
 
 
-def get_args(data_name, rate=None):
+def get_args(data_name, rate=None, inductive_model_path=None, l1_lambda=1.0):
     if rate is None:
         input_path = Path('./data/processed') / data_name
         output_path = Path('./data/intermediate') / data_name
@@ -18,7 +18,7 @@ def get_args(data_name, rate=None):
         "embedding_path": output_path / 'sgcn_embedding.pkl',
         "regression_weights_path": output_path / 'sgcn_weights.pkl',
         # '/home2/kudo/SGCN/output/inductive/{0}_model'.format(data_name), # or None
-        "inductive_model_path": None,
+        "inductive_model_path": inductive_model_path,
         "log_path": f'./data/logs/{data_name}.log',
         "epochs": 150,
         "test_size": 0.33,
@@ -38,6 +38,6 @@ def get_args(data_name, rate=None):
         "hidden_residual": False,
         "eval_freq": 1,
         "subgraph_training": False,
-        "l1_lambda": 0.0,
+        "l1_lambda": l1_lambda,
     })
     return args

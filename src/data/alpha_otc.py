@@ -33,6 +33,7 @@ def main(data_name):
     network_df['id1_'] = label_encoder.transform(network_df.id1)
     network_df['id2_'] = label_encoder.transform(network_df.id2)
     gt_df['node_id'] = label_encoder.transform(gt_df.user_id)
+
     node_features_df = pd.concat([get_dist(network_df, 'id1_'), get_dist(
         network_df, 'id2_')], 1).fillna(0).sort_index()
     # 出力

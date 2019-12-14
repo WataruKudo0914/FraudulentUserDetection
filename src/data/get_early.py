@@ -37,6 +37,7 @@ def get_early_network(data_name, rate):
             [get_dist(df_, 'id1', rating_cols=all_node_features_id1.columns),
              get_dist(df_, 'id2', rating_cols=all_node_features_id2.columns)],
             1).fillna(0).sort_index()
+        early_node_features_df = early_node_features_df.loc[label_encoder.classes_]
     else:
         early_node_features_df = pd.concat(
             [get_dist(df, 'id1_', rating_cols=all_node_features_id1.columns),
@@ -46,8 +47,9 @@ def get_early_network(data_name, rate):
     early_data_dir = Path('./data/processed/early') / f'{data_name}_{rate}'
     if not early_data_dir.exists():
         early_data_dir.mkdir()
-    df[['id1_', 'id2_', 'weight']].to_csv(early_data_dir / 'network.csv')
-    gt_df[['node_id', 'label']].to_csv(early_data_dir / 'gt.csv')
+    df[['id1_', 'id2_', 'weight']].to_csv(
+        early_data_dir / 'network.csv', index=None)
+    gt_df[['node_id', 'label']].to_csv(early_data_dir / 'gt.csv', index=None)
     np.save(arr=label_encoder.classes_,
             file=early_data_dir / 'label_encoder.npy')
     early_node_features_df.to_csv(early_data_dir / 'node_feature.csv',
