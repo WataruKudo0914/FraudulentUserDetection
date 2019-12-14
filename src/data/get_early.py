@@ -58,7 +58,8 @@ def get_early_network(data_name, rate):
 
 
 if __name__ == '__main__':
-    rates = [0.1, 0.2, 0.3]
-    data_names = ['alpha', 'otc', 'amazon', 'amazon_electronics']
+    rates = [0.1, 0.2, 0.3, 0.4, 0.5]
+    data_names = ['alpha', 'otc', 'amazon',
+                  'amazon_electronics', 'amazon_baby', 'amazon_beauty']
     for data_name, rate in itertools.product(data_names, rates):
         get_early_network(data_name, rate)

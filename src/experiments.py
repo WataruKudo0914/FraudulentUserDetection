@@ -62,6 +62,6 @@ exp3_result_df.to_csv(result_dir / 'exp3.csv')
 """
 exp4_result_df = model.inductive_learning_eval(
     args.data_name,
-    iter_num=3
+    iter_num=30
 )
 exp4_result_df.to_csv(result_dir / 'exp4.csv')

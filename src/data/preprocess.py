@@ -20,8 +20,11 @@ def main():
     epinions.main()
     # amazon_electronics
     amazon_extra.main('amazon_electronics')
-    # amazon_sports
-    amazon_extra.main('amazon_sports')
+    # amazon_baby
+    amazon_extra.main('amazon_baby')
+    # amazon_beauty
+    amazon_extra.main('amazon_beauty')
+    
 
 
 if __name__ == '__main__':
