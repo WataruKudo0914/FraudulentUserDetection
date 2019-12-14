@@ -10,9 +10,25 @@ otc:
 epinions:
   gt: https://drive.google.com/uc?id=1UoNPlgVzMr3kMamlZJFpardO0hrw75lc
   network: https://drive.google.com/uc?id=1ULkhDwpL1TMSmeUhYOb9SXK45Hs2p2uU
-amazon_electronics:
-  file_path: "http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_Electronics_5.json.gz"
-amazon_baby:
-  file_path: "http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_Baby_5.json.gz"
-amazon_beauty:
-  file_path: "http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_Beauty_5.json.gz"
+# amazon_electronics:
+#   file_path: "http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_Electronics_5.json.gz"
+# amazon_baby:
+#   file_path: "http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_Baby_5.json.gz"
+# amazon_beauty:
+#   file_path: "http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_Beauty_5.json.gz"
+# amazon_sports:
+#   file_path: "http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_Sports_and_Outdoors_5.json.gz"
+# amazon_kindle:
+#   file_path: "http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_Kindle_Store_5.json.gz"
+amazon_home:
+  file_path: "http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_Home_and_Kitchen_5.json.gz"
+# amazon_cd:
+#   file_path: "http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_CDs_and_Vinyl_5.json.gz"
+# amazon_cloth:
+#   file_path: "http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_Clothing_Shoes_and_Jewelry_5.json.gz"
+# amazon_cell:
+#   file_path: "http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_Cell_Phones_and_Accessories_5.json.gz"
+amazon_music:
+  file_path: "http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_Digital_Music_5.json.gz"
+amazon_app:
+  file_path: "http://snap.stanford.edu/data/amazon/productGraph/categoryFiles/reviews_Apps_for_Android_5.json.gz"

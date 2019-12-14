@@ -15,11 +15,13 @@ def get_early_network(data_name, rate):
     df_ = pd.read_csv(raw_dir / 'network.csv', index_col=0)
     df_.columns = ['id1', 'id2', 'rating', 'time', 'weight']
     df = df_.sort_values('time').iloc[:int(len(df_)*rate), :]
-    if data_name in ['amazon', 'amazon_electronics', 'amazon_sports']:
+    if data_name in ['amazon', 'amazon_home', 'amazon_music', 'amazon_app']:
         # amazonの場合だけ, rating==3のエッジを捨てる
         df = df.loc[df.weight != 0]
-    else:
+    elif data_name in ['alpha', 'otc', 'epinions']:
         pass
+    else:
+        raise ValueError
     # raw gt
     gt_df = pd.read_csv(raw_dir/'gt.csv', index_col=0)
     gt_df.columns = ['user_id', 'label']
@@ -32,21 +34,22 @@ def get_early_network(data_name, rate):
     gt_df['node_id'] = label_encoder.transform(gt_df.user_id)
     all_node_features_id1 = get_dist(df_, 'id1')
     all_node_features_id2 = get_dist(df_, 'id2')
-    if data_name in ['amazon', 'amazon_electronics', 'amazon_sports']:
+    if data_name in ['amazon', 'amazon_home', 'amazon_music', 'amazon_app']:
         early_node_features_df = pd.concat(
             [get_dist(df_, 'id1', rating_cols=all_node_features_id1.columns),
              get_dist(df_, 'id2', rating_cols=all_node_features_id2.columns)],
             1).fillna(0).sort_index()
         early_node_features_df = early_node_features_df.loc[label_encoder.classes_]
-    else:
+    elif data_name in ['alpha', 'otc', 'epinions']:
         early_node_features_df = pd.concat(
             [get_dist(df, 'id1_', rating_cols=all_node_features_id1.columns),
              get_dist(df, 'id2_', rating_cols=all_node_features_id2.columns)],
             1).fillna(0).sort_index()
+    else:
+        raise ValueError
     # 保存
     early_data_dir = Path('./data/processed/early') / f'{data_name}_{rate}'
-    if not early_data_dir.exists():
-        early_data_dir.mkdir()
+    early_data_dir.mkdir(parents=True, exist_ok=True)
     df[['id1_', 'id2_', 'weight']].to_csv(
         early_data_dir / 'network.csv', index=None)
     gt_df[['node_id', 'label']].to_csv(early_data_dir / 'gt.csv', index=None)
@@ -60,6 +63,6 @@ def get_early_network(data_name, rate):
 if __name__ == '__main__':
     rates = [0.1, 0.2, 0.3, 0.4, 0.5]
     data_names = ['alpha', 'otc', 'amazon',
-                  'amazon_electronics', 'amazon_baby', 'amazon_beauty']
+                  'amazon_home', 'amazon_music', 'amazon_app']
     for data_name, rate in itertools.product(data_names, rates):
         get_early_network(data_name, rate)

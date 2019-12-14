@@ -18,13 +18,12 @@ def main():
     amazon.main()
     # epinions
     epinions.main()
-    # amazon_electronics
-    amazon_extra.main('amazon_electronics')
-    # amazon_baby
-    amazon_extra.main('amazon_baby')
-    # amazon_beauty
-    amazon_extra.main('amazon_beauty')
-    
+    # amazon_home
+    amazon_extra.main('amazon_home')
+    # amazon_musicc
+    amazon_extra.main('amazon_music')
+    # amazon_app
+    amazon_extra.main('amazon_app')
 
 
 if __name__ == '__main__':

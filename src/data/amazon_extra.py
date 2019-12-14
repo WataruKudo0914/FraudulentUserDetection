@@ -15,16 +15,20 @@ def main(data_name):
     raw_network_dir = Path('./data/raw/') / data_name
     if not raw_network_dir.exists():
         raw_network_dir.mkdir()
+    if data_name == 'amazon_electronics':
+        split_point = pd.Timestamp(2014, 1, 1)
+    else:
+        split_point = pd.Timestamp(2000, 1, 1)
     # 処理
     file_path = data_path_dict['file_path']
     review_df_raw = pd.read_json(file_path, lines=True)
     assert ~review_df_raw.duplicated(['asin', 'reviewerID']).any()
     review_df = preprocessing(review_df_raw)
-    network_df = generate_network_csv(review_df, pd.Timestamp(2013, 1, 1))
+    network_df = generate_network_csv(review_df, split_point)
     network_df.columns = ['user_id', 'product_id', 'rating', 'time']
     network_df['weight'] = network_df.rating.map(lambda x: (x-3)/2).round()
     network_df.to_csv(raw_network_dir / 'network.csv')
-    gt_df = generate_gt(review_df, pd.Timestamp(2013, 1, 1))
+    gt_df = generate_gt(review_df, split_point)
     gt_df.columns = ['user_id', 'label']
     gt_df.to_csv(raw_network_dir / 'gt.csv')
     # rating==3を除外する
