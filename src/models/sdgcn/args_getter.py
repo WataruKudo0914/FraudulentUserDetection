@@ -19,7 +19,7 @@ def get_args(data_name, rate=None):
         "regression_weights_path": output_path / 'sgcn_weights.pkl',
         # '/home2/kudo/SGCN/output/inductive/{0}_model'.format(data_name), # or None
         "inductive_model_path": None,
-        "log_path": './data/logs',
+        "log_path": f'./data/logs/{data_name}.log',
         "epochs": 150,
         "test_size": 0.33,
         "reduction_iterations": 128,

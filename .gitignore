@@ -8,5 +8,5 @@ data/intermediate/*
 data/raw/*/*
 src/models/_sgcns
 *.pyc
-
+*.log
 !.gitkeep

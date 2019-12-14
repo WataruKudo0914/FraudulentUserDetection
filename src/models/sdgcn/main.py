@@ -33,8 +33,8 @@ def ten_fold_cv(data_name):
         trainer.setup_dataset()
         trainer.create_and_train_model()
 
-        if args.test_size > 0:
-            save_logs(args, trainer.logs)
+        # if args.test_size > 0:
+        #     save_logs(args, trainer.logs)
 
         # test
         print("==== Test Phase ====")
@@ -59,8 +59,9 @@ def ten_fold_cv(data_name):
         print()
 
     final_auc_score = np.mean(auc_scores)
-    print("==================================")
+    print("=======================================")
     print(f"averaged auc : {final_auc_score}")
+    print("=======================================")
     return final_auc_score
 
 
