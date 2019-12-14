@@ -154,5 +154,4 @@ def sample_edges(edges, sample_num, nodes_dict):
     negative_sample_num = min(sample_num, sampled_negative_edges.shape[0])
     sampled_negative_edges = sampled_negative_edges[np.random.choice(np.arange(
         sampled_negative_edges.shape[0]), negative_sample_num, replace=False), :]
-
     return sampled_positive_edges, sampled_negative_edges
