@@ -270,17 +270,17 @@ def iterate(args):
     all_node_vals_good_sorted = sorted(all_node_vals_good, key=lambda x: (
         float(x[1]), float(x[2]), -1 * float(x[3])))[::-1]
 
-    fw = open(f"./data/output/rev2_results/goodness/{NETWORKNAME}-" +
-              f"good-sorted-users-{alpha1}-{alpha2}-{beta1}-{beta2}-{gamma1}-{gamma2}-{gamma3}.csv", "w")
+    # fw = open(f"./data/output/rev2_results/goodness/{NETWORKNAME}-" +
+    #           f"good-sorted-users-{alpha1}-{alpha2}-{beta1}-{beta2}-{gamma1}-{gamma2}-{gamma3}.csv", "w")
 
-    for i, sl in enumerate(all_node_vals_good_sorted):
-        # if sl[3] in badusers or sl[3] in goodusers:  # dont store users for which we dont have ground truth
-        fw.write(f"{str(sl[0])},{str(sl[1])},{str(sl[2])},{str(sl[3])}\n")
-    fw.close()
+    # for i, sl in enumerate(all_node_vals_good_sorted):
+    #     # if sl[3] in badusers or sl[3] in goodusers:  # dont store users for which we dont have ground truth
+    #     fw.write(f"{str(sl[0])},{str(sl[1])},{str(sl[2])},{str(sl[3])}\n")
+    # fw.close()
 
     # 現在のリンクのriliability
-    nx.to_pandas_edgelist(G).to_csv(result_dir /
-                                    f'reliability-{alpha1}-{alpha2}-{beta1}-{beta2}-{gamma1}-{gamma2}-{gamma3}.csv')
+    # nx.to_pandas_edgelist(G).to_csv(result_dir /
+    #                                 f'reliability-{alpha1}-{alpha2}-{beta1}-{beta2}-{gamma1}-{gamma2}-{gamma3}.csv')
 
 
 if __name__ == '__main__':
