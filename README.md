@@ -14,6 +14,22 @@
     signed network (edge = {-1, 1})
 - `data/processed/<data_name>/network.csv`  
     signed networkのノードに対応する不正ユーザラベル
+
+実験対象データリスト
+
+|data_name| 説明 |  
+| --- | --- |
+|alpha|ビットコイン取引のuser2user評価|
+|otc|ビットコイン取引のuser2user評価|
+|epinions|user2user|
+|amazon|user2product|
+|amazon_home|【新データセット】|
+|amazon_music|【新データセット】|
+|amazon_app|【新データセット】|
+
+
+
+
 ### 各ネットワークから初期のエッジを取り出す(inductive setting用)
 コード:  
 ``` sh scripts/make_early_networks.sh ```  
