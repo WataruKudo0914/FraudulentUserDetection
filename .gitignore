@@ -10,4 +10,5 @@ src/models/_sgcns
 *.pyc
 *.log
 models/*
+*.out
 !.gitkeep

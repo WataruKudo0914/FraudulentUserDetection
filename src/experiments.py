@@ -30,7 +30,7 @@ elif args.model_name == 'rev2':
 else:
     raise ValueError
 
-result_dir = Path("./data/results/") / args.data_name
+result_dir = Path("./data/results/") / args.model_name / args.data_name
 result_dir.mkdir(parents=True, exist_ok=True)
 
 """
