@@ -187,7 +187,7 @@ def iterate(args):
     result_dir = Path(
         "./data/intermediate/rev2_results/fairness/") / NETWORKNAME
     if not result_dir.exists():
-        result_dir.mkdir()
+        result_dir.mkdir(parents=True)
 
     df = nx.to_pandas_edgelist(G)
 

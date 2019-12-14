@@ -21,8 +21,8 @@ do
 			#wait;
 		done
 		(( c2+=1 ))
-		wait;
+		# wait;
 	done
 	(( c1+=1 ))
-	#wait;
+	wait;
 done
