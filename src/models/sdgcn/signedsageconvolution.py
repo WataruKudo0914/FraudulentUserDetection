@@ -5,6 +5,7 @@ from torch.nn import Parameter
 from torch_scatter import scatter_add, scatter_mean
 from torch_geometric.utils import remove_self_loops, add_self_loops
 
+
 def uniform(size, tensor):
     """
     Uniform weight initialization.
@@ -15,10 +16,12 @@ def uniform(size, tensor):
     if tensor is not None:
         tensor.data.uniform_(-stdv, stdv)
 
+
 class ListModule(torch.nn.Module):
     """
     Abstract list layer class.
     """
+
     def __init__(self, *args):
         """
         Model initializing.
@@ -52,6 +55,7 @@ class ListModule(torch.nn.Module):
         """
         return len(self._modules)
 
+
 class SignedSAGEConvolution(torch.nn.Module):
     """
     Abstract Signed SAGE convolution class.
@@ -60,6 +64,7 @@ class SignedSAGEConvolution(torch.nn.Module):
     :param norm_embed: Normalize embedding -- boolean.
     :param bias: Add bias or no.
     """
+
     def __init__(self,
                  in_channels,
                  out_channels,
@@ -97,10 +102,12 @@ class SignedSAGEConvolution(torch.nn.Module):
         """
         return "{}({}, {})".format(self.__class__.__name__, self.in_channels, self.out_channels)
 
+
 class SignedSAGEConvolutionBase(SignedSAGEConvolution):
     """
     Base Signed SAGE class for the first layer of the model.
     """
+
     def forward(self, x, edge_index):
         """
         Forward propagation pass with features an indices.
@@ -109,7 +116,7 @@ class SignedSAGEConvolutionBase(SignedSAGEConvolution):
         """
         edge_index, _ = remove_self_loops(edge_index, None)
         edge_index = add_self_loops(edge_index, num_nodes=x.size(0))
-        if self.out_or_in[0] == 'out': # aggregation by out edge
+        if self.out_or_in[0] == 'out':  # aggregation by out edge
             row, col = edge_index
         else:
             col, row = edge_index
@@ -119,19 +126,21 @@ class SignedSAGEConvolutionBase(SignedSAGEConvolution):
         else:
             out = scatter_add(x[col], row, dim=0, dim_size=x.size(0))
 
-        out = torch.cat((out,x),1)
+        out = torch.cat((out, x), 1)
         out = torch.matmul(out, self.weight)
-        
+
         if self.bias is not None:
             out = out + self.bias
         if self.norm_embed:
             out = F.normalize(out, p=2, dim=-1)
         return out
 
+
 class SignedSAGEConvolutionDeep(SignedSAGEConvolution):
     """
     Deep Signed SAGE class for multi-layer models.
     """
+
     def forward(self, x_1, x_2, edge_index_pos, edge_index_neg):
         """
         Forward propagation pass with features an indices.
@@ -144,22 +153,26 @@ class SignedSAGEConvolutionDeep(SignedSAGEConvolution):
         edge_index_pos = add_self_loops(edge_index_pos, num_nodes=x_1.size(0))
         edge_index_neg, _ = remove_self_loops(edge_index_neg, None)
         edge_index_neg = add_self_loops(edge_index_neg, num_nodes=x_2.size(0))
-                
+
         if self.out_or_in[0] == 'out':
             row_pos, col_pos = edge_index_pos
             row_neg, col_neg = edge_index_neg
         else:
             col_pos, row_pos = edge_index_pos
             col_neg, row_neg = edge_index_neg
-        
+
         if self.norm:
-            out_1 = scatter_mean(x_1[col_pos], row_pos, dim=0, dim_size=x_1.size(0))
-            out_2 = scatter_mean(x_2[col_neg], row_neg, dim=0, dim_size=x_2.size(0))
+            out_1 = scatter_mean(x_1[col_pos], row_pos,
+                                 dim=0, dim_size=x_1.size(0))
+            out_2 = scatter_mean(x_2[col_neg], row_neg,
+                                 dim=0, dim_size=x_2.size(0))
         else:
-            out_1 = scatter_add(x_1[col_pos], row_pos, dim=0, dim_size=x_1.size(0))
-            out_2 = scatter_add(x_2[col_neg], row_neg, dim=0, dim_size=x_2.size(0))
-            
-        out = torch.cat((out_1, out_2, x_1,x_2),1)
+            out_1 = scatter_add(x_1[col_pos], row_pos,
+                                dim=0, dim_size=x_1.size(0))
+            out_2 = scatter_add(x_2[col_neg], row_neg,
+                                dim=0, dim_size=x_2.size(0))
+
+        out = torch.cat((out_1, out_2, x_1, x_2), 1)
         # out = torch.cat((out_1, out_2),1)
         out = torch.matmul(out, self.weight)
         if self.bias is not None:
