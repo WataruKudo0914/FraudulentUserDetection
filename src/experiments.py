@@ -9,7 +9,7 @@
 4. inductive setting (sdgcn, sgcnのみ)
 """
 from src.arg_parser import get_parser
-from src.models import sdgcn, sgcn, rev2, rgcn
+# from src.models import sdgcn, sgcn, rev2, rgcn
 from pathlib import Path
 import json
 
@@ -20,12 +20,16 @@ args = parser.parse_args()
 model設定
 """
 if args.model_name == 'sdgcn':
+    from src.models import sdgcn
     model = sdgcn
 elif args.model_name == 'sgcn':
+    from src.models import sgcn
     model = sgcn
 elif args.model_name == 'rgcn':
+    from src.models import rgcn
     model = rgcn
 elif args.model_name == 'rev2':
+    from src.models import rev2
     model = rev2
 else:
     raise ValueError
