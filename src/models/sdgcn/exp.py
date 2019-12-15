@@ -59,7 +59,7 @@ def ten_fold_cv(data_name):
     print("=======================================")
     print(f"averaged auc : {final_auc_score}")
     print("=======================================")
-    return final_auc_score
+    return {"auc": final_auc_score}
 
 
 def robustness_experiments(

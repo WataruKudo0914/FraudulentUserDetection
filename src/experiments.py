@@ -36,9 +36,9 @@ result_dir.mkdir(parents=True, exist_ok=True)
 """
 実験1
 """
-average_auc = model.ten_fold_cv(args.data_name)
+result_dict = model.ten_fold_cv(args.data_name)
 with open(result_dir / 'exp1.json', 'w') as f:
-    json.dump({'auc': average_auc}, f)
+    json.dump(result_dict, f)
 
 """
 実験2
