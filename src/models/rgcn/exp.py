@@ -99,8 +99,8 @@ def _ten_fold_for_dataset(all_idx, known_labels,
         auc_scores.append(test_auc)
         print("test auc : {}".format(test_auc))
         print("=================")
-        return np.mean(auc_scores)
+    return np.mean(auc_scores)
 
 
 if __name__ == '__main__':
-    ten_fold_cv('amazon_home')
+    ten_fold_cv('amazon_music')
