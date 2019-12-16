@@ -6,6 +6,7 @@ from dgl import DGLGraph
 from .layers import Model
 import torch
 import torch.nn.functional as F
+import pandas as pd
 
 
 def ten_fold_cv(data_name):
@@ -107,8 +108,15 @@ def robustness_experiments(
         iter_num=30):
     raw_dataset = get_dataset(data_name, edge_attribute='raw')
     sign_dataset = get_dataset(data_name, edge_attribute='sign')
-    raw_results = _robustness_for_dataset(training_rates_list, iter_num)
-    sign_results = _robustness_for_dataset(training_rates_list, iter_num)
+    raw_results = _robustness_for_dataset(
+        training_rates_list, iter_num, **raw_dataset)
+    sign_results = _robustness_for_dataset(
+        training_rates_list, iter_num, **sign_dataset)
+    result_df = pd.DataFrame()
+    result_df['raw_auc'] = raw_results
+    result_df['sign_edge'] = sign_results
+    result_df.index = training_rates_list
+    return result_df
 
 
 def _robustness_for_dataset(train_rate_list, iter_num,
@@ -202,7 +210,7 @@ def _robustness_for_dataset(train_rate_list, iter_num,
 
 
 def inductive_learning_eval():
-    pass
+    return None
 
 
 if __name__ == '__main__':
