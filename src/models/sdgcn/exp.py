@@ -117,9 +117,9 @@ def robustness_experiments(
             print(cmx)
             print()
 
-    all_auc_scores.append(np.mean(auc_scores))
-    done_train_rate.append(train_rate)
-    print(train_rate, ':', np.mean(auc_scores))
+        all_auc_scores.append(np.mean(auc_scores))
+        done_train_rate.append(train_rate)
+        print(train_rate, ':', np.mean(auc_scores))
     result_df = pd.DataFrame(
         all_auc_scores, index=done_train_rate, columns=['average_auc'])
     return result_df
