@@ -127,7 +127,6 @@ def robustness_experiments(
 
 
 def inductive_learning_eval(data_name, rate_list=[0.1, 0.2, 0.3], iter_num=30):
-    rate_list = [0.1, 0.2, 0.3]
     _train_all(data_name, rate_list, iter_num=iter_num)
     new_args = get_args(data_name)
     result_df, true_pred_dict = _eval_all(
