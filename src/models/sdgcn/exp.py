@@ -135,11 +135,13 @@ def inductive_learning_eval(data_name, rate_list=[0.1, 0.2, 0.3], iter_num=30):
 
 
 def _train_all(data_name, rate_list, l1_lambda=0.0, l2_lambda=10e-4, iter_num=30):
+    inductive_model_dir = Path('./models/sdgcn/')
+    inductive_model_dir.mkdir(parents=True, exist_ok=True)
     for rate in rate_list:
         for i in range(iter_num):
             print(f'{i}-th iteration')
-            inductive_model_path = Path(
-                './models/sdgcn/') / f'{data_name}_{rate}_{i}th'
+            inductive_model_path = inductive_model_dir / \
+                f'{data_name}_{rate}_{i}th'
             args = get_args(data_name, rate=rate,
                             inductive_model_path=inductive_model_path,
                             l1_lambda=1.0)
