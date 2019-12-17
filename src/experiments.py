@@ -27,7 +27,12 @@ experiment.add_tags(
         'data_name': args.data_name,
     }
 )
-
+experiment.log_others(
+    {
+        'model_name': args.model_name,
+        'data_name': args.data_name,
+    }
+)
 """
 model設定
 """
