@@ -51,11 +51,13 @@ def ten_fold_cv(experiment, data_name):
         cmx = confusion_matrix(
             y_true=[1 if i == -1 else 0 for i in test_node_labels], y_pred=predict_labels)
         regression_weights.append(trainer.model.regression_weights)
+        experiment.log_metric(name=f'auc_fold_({i+1}/10)', value=auc_score)
         print("{0}-th fold's auc_score:{1}".format(i, auc_score))
         print(cmx)
         print()
 
     final_auc_score = np.mean(auc_scores)
+    experiment.log_metric("average_auc_10fold", final_auc_score)
     print("=======================================")
     print(f"averaged auc : {final_auc_score}")
     print("=======================================")
@@ -121,6 +123,7 @@ def robustness_experiments(
         all_auc_scores.append(np.mean(auc_scores))
         done_train_rate.append(train_rate)
         print(train_rate, ':', np.mean(auc_scores))
+        experiment.log_metric(f'rate_{train_rate}', np.mean(auc_scores))
     result_df = pd.DataFrame(
         all_auc_scores, index=done_train_rate, columns=['average_auc'])
     return result_df
@@ -128,14 +131,15 @@ def robustness_experiments(
 
 def inductive_learning_eval(
         experiment, data_name, rate_list=[0.1, 0.2, 0.3], iter_num=30):
-    _train_all(data_name, rate_list, iter_num=iter_num)
+    _train_all(experiment, data_name, rate_list, iter_num=iter_num)
     new_args = get_args(data_name)
     result_df, true_pred_dict = _eval_all(
         data_name, rate_list, new_args, iter_num=iter_num)
     return result_df
 
 
-def _train_all(data_name, rate_list, l1_lambda=0.0, l2_lambda=10e-4, iter_num=30):
+def _train_all(experiment, data_name, rate_list,
+               l1_lambda=0.0, l2_lambda=10e-4, iter_num=30):
     inductive_model_dir = Path('./models/sdgcn/')
     inductive_model_dir.mkdir(parents=True, exist_ok=True)
     for rate in rate_list:
@@ -151,6 +155,7 @@ def _train_all(data_name, rate_list, l1_lambda=0.0, l2_lambda=10e-4, iter_num=30
             trainer = SignedGCNTrainer(args, edges, nodes_dict)
             trainer.setup_dataset()
             trainer.create_and_train_model()
+        experiment.log_other('inductive_trained_rate', rate)
 
 
 def _eval_all(data_name, rate_list, new_args, iter_num=30):
