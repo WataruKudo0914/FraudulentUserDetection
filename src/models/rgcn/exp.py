@@ -9,7 +9,7 @@ import torch.nn.functional as F
 import pandas as pd
 
 
-def ten_fold_cv(data_name):
+def ten_fold_cv(experiment, data_name):
     raw_dataset = get_dataset(data_name, edge_attribute='raw')
     sign_dataset = get_dataset(data_name, edge_attribute='sign')
     # raw_dataset
@@ -103,6 +103,7 @@ def _ten_fold_for_dataset(all_idx, known_labels,
 
 
 def robustness_experiments(
+        experiment,
         data_name,
         training_rates_list=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
         iter_num=30):

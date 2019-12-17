@@ -9,7 +9,7 @@ import torch
 from pathlib import Path
 
 
-def ten_fold_cv(data_name):
+def ten_fold_cv(experiment, data_name):
     args = get_args(data_name, rate=None)
     edges, nodes_dict = read_graph(args)
     kf = StratifiedKFold(n_splits=10, shuffle=True, random_state=0)
@@ -63,6 +63,7 @@ def ten_fold_cv(data_name):
 
 
 def robustness_experiments(
+        experiment,
         data_name,
         training_rates_list=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
         iter_num=30):
@@ -125,7 +126,8 @@ def robustness_experiments(
     return result_df
 
 
-def inductive_learning_eval(data_name, rate_list=[0.1, 0.2, 0.3], iter_num=30):
+def inductive_learning_eval(
+        experiment, data_name, rate_list=[0.1, 0.2, 0.3], iter_num=30):
     _train_all(data_name, rate_list, iter_num=iter_num)
     new_args = get_args(data_name)
     result_df, true_pred_dict = _eval_all(
