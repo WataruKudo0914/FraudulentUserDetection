@@ -21,12 +21,6 @@ experiment = Experiment(api_key="K96HV1ZN57Ip54lRy1GNaOpBN",
 
 parser = get_parser()
 args = parser.parse_args()
-experiment.add_tags(
-    {
-        'model_name': args.model_name,
-        'data_name': args.data_name,
-    }
-)
 experiment.log_others(
     {
         'model_name': args.model_name,
