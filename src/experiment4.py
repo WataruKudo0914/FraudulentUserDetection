@@ -48,32 +48,33 @@ else:
 result_dir = Path("./data/results/") / args.model_name / args.data_name
 result_dir.mkdir(parents=True, exist_ok=True)
 
-"""
-実験1
-"""
-result_dict = model.ten_fold_cv(experiment, args.data_name)
-with open(result_dir / 'exp1.json', 'w') as f:
-    json.dump(result_dict, f)
+# """
+# 実験1
+# """
+# result_dict = model.ten_fold_cv(experiment, args.data_name)
+# with open(result_dir / 'exp1.json', 'w') as f:
+#     json.dump(result_dict, f)
 
-"""
-実験2
-"""
-exp2_result_df = model.robustness_experiments(
-    experiment,
-    args.data_name,
-    training_rates_list=[0.03]
-)
-exp2_result_df.to_csv(result_dir / 'exp2.csv')
+# """
+# 実験2
+# """
+# exp2_result_df = model.robustness_experiments(
+#     experiment,
+#     args.data_name,
+#     training_rates_list=[0.03]
+# )
+# exp2_result_df.to_csv(result_dir / 'exp2.csv')
 
-"""
-実験3
-"""
-exp3_result_df = model.robustness_experiments(
-    experiment,
-    args.data_name,
-    training_rates_list=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-)
-exp3_result_df.to_csv(result_dir / 'exp3.csv')
+# """
+# 実験3
+# """
+# exp3_result_df = model.robustness_experiments(
+#     experiment,
+#     args.data_name,
+#     training_rates_list=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+# )
+# exp3_result_df.to_csv(result_dir / 'exp3.csv')
+
 """
 実験4
 """
