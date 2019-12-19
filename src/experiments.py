@@ -51,7 +51,7 @@ result_dir.mkdir(parents=True, exist_ok=True)
 """
 実験1
 """
-if 1 in args.experiments:
+if '1' in args.experiments:
     result_dict = model.ten_fold_cv(experiment, args.data_name)
     with open(result_dir / 'exp1.json', 'w') as f:
         json.dump(result_dict, f)
@@ -59,7 +59,7 @@ if 1 in args.experiments:
 """
 実験2
 """
-if 2 in args.experiments:
+if '2' in args.experiments:
     exp2_result_df = model.robustness_experiments(
         experiment,
         args.data_name,
@@ -70,7 +70,7 @@ if 2 in args.experiments:
 """
 実験3
 """
-if 3 in args.experiments:
+if '3' in args.experiments:
     exp3_result_df = model.robustness_experiments(
         experiment,
         args.data_name,
@@ -81,7 +81,7 @@ if 3 in args.experiments:
 """
 実験4
 """
-if 4 in args.experiments:
+if '4' in args.experiments:
     exp4_result_df = model.inductive_learning_eval(
         args.exp4_select,
         experiment,

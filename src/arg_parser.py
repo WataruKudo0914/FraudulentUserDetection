@@ -14,7 +14,7 @@ def get_parser():
     parser.add_argument(
         '--experiments',
         type=lambda x: x.split(','),
-        default=[1, 2, 3, 4]
+        default=['1', '2', '3', '4']
     )
     parser.add_argument(
         '--exp4_select',
