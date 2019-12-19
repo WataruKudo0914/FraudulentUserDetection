@@ -137,7 +137,7 @@ def inductive_learning_eval(
     if 'eval' in exp4_select:
         new_args = get_args(data_name)
         result_df, true_pred_dict = _eval_all(
-            data_name, rate_list, new_args, iter_num=iter_num)
+            experiment, data_name, rate_list, new_args, iter_num=iter_num)
     else:
         result_df = pd.DataFrame()
     return result_df
@@ -165,7 +165,7 @@ def _train_all(experiment, data_name, rate_list,
         experiment.log_other('inductive_trained_rate', str(trained_rate))
 
 
-def _eval_all(data_name, rate_list, new_args, iter_num=30):
+def _eval_all(experiment, data_name, rate_list, new_args, iter_num=30):
     new_edges, new_nodes_dict = read_graph(new_args)
     X = np.array(pd.read_csv(new_args.features_path))
     result_df = pd.DataFrame()
@@ -195,6 +195,7 @@ def _eval_all(data_name, rate_list, new_args, iter_num=30):
         averaged_auc = np.mean(auc_scores)
         result_df = result_df.append(pd.io.json.json_normalize(
             {f'{data_name}_{rate}': averaged_auc}).T)
+        experiment.log_other(key=f'exp4_rate_{rate}', value=averaged_auc)
 
         bagging_pred_score = sum(bagging_pred_scores)/iter_num
         tmp_df = pd.DataFrame()
