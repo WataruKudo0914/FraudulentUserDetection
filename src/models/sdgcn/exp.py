@@ -142,6 +142,7 @@ def _train_all(experiment, data_name, rate_list,
                l1_lambda=0.0, l2_lambda=10e-4, iter_num=30):
     inductive_model_dir = Path('./models/sdgcn/')
     inductive_model_dir.mkdir(parents=True, exist_ok=True)
+    trained_rate = []
     for rate in rate_list:
         for i in range(iter_num):
             print(f'{i}-th iteration')
@@ -155,7 +156,8 @@ def _train_all(experiment, data_name, rate_list,
             trainer = SignedGCNTrainer(args, edges, nodes_dict)
             trainer.setup_dataset()
             trainer.create_and_train_model()
-        experiment.log_other('inductive_trained_rate', rate)
+        trained_rate.append(rate)
+        experiment.log_other('inductive_trained_rate', str(trained_rate))
 
 
 def _eval_all(data_name, rate_list, new_args, iter_num=30):
