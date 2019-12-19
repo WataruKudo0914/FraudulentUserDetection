@@ -130,11 +130,16 @@ def robustness_experiments(
 
 
 def inductive_learning_eval(
+        exp4_select,
         experiment, data_name, rate_list=[0.1, 0.2, 0.3], iter_num=30):
-    _train_all(experiment, data_name, rate_list, iter_num=iter_num)
-    new_args = get_args(data_name)
-    result_df, true_pred_dict = _eval_all(
-        data_name, rate_list, new_args, iter_num=iter_num)
+    if 'train' in exp4_select:
+        _train_all(experiment, data_name, rate_list, iter_num=iter_num)
+    if 'eval' in exp4_select:
+        new_args = get_args(data_name)
+        result_df, true_pred_dict = _eval_all(
+            data_name, rate_list, new_args, iter_num=iter_num)
+    else:
+        result_df = pd.DataFrame()
     return result_df
 
 

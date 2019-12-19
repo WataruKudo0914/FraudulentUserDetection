@@ -51,39 +51,45 @@ result_dir.mkdir(parents=True, exist_ok=True)
 """
 実験1
 """
-result_dict = model.ten_fold_cv(experiment, args.data_name)
-with open(result_dir / 'exp1.json', 'w') as f:
-    json.dump(result_dict, f)
+if 1 in args.experiments:
+    result_dict = model.ten_fold_cv(experiment, args.data_name)
+    with open(result_dir / 'exp1.json', 'w') as f:
+        json.dump(result_dict, f)
 
 """
 実験2
 """
-exp2_result_df = model.robustness_experiments(
-    experiment,
-    args.data_name,
-    training_rates_list=[0.03]
-)
-exp2_result_df.to_csv(result_dir / 'exp2.csv')
+if 2 in args.experiments:
+    exp2_result_df = model.robustness_experiments(
+        experiment,
+        args.data_name,
+        training_rates_list=[0.03]
+    )
+    exp2_result_df.to_csv(result_dir / 'exp2.csv')
 
 """
 実験3
 """
-exp3_result_df = model.robustness_experiments(
-    experiment,
-    args.data_name,
-    training_rates_list=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
-)
-exp3_result_df.to_csv(result_dir / 'exp3.csv')
+if 3 in args.experiments:
+    exp3_result_df = model.robustness_experiments(
+        experiment,
+        args.data_name,
+        training_rates_list=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+    )
+    exp3_result_df.to_csv(result_dir / 'exp3.csv')
+
 """
 実験4
 """
-exp4_result_df = model.inductive_learning_eval(
-    experiment,
-    args.data_name,
-    rate_list=args.exp4_rate_list,
-    iter_num=30
-)
-exp4_result_df.to_csv(result_dir / 'exp4.csv')
+if 4 in args.experiments:
+    exp4_result_df = model.inductive_learning_eval(
+        args.exp4_select,
+        experiment,
+        args.data_name,
+        rate_list=args.exp4_rate_list,
+        iter_num=30
+    )
+    exp4_result_df.to_csv(result_dir / 'exp4.csv')
 
 # comet-mlに保存
 experiment.log_asset_folder(result_dir)
