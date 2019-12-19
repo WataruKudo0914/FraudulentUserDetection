@@ -85,3 +85,4 @@ exp4_result_df = model.inductive_learning_eval(
     iter_num=30
 )
 exp4_result_df.to_csv(result_dir / 'exp4.csv')
+experiment.log_asset_folder(result_dir)

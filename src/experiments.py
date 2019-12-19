@@ -84,3 +84,6 @@ exp4_result_df = model.inductive_learning_eval(
     iter_num=30
 )
 exp4_result_df.to_csv(result_dir / 'exp4.csv')
+
+# comet-mlに保存
+experiment.log_asset_folder(result_dir)
