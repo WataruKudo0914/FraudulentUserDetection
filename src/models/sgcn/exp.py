@@ -9,7 +9,7 @@ import torch
 from pathlib import Path
 
 
-def ten_fold_cv(data_name):
+def ten_fold_cv(experiment, data_name):
     args = get_args(data_name, rate=None)
     edges, nodes_dict = read_graph(args)
     kf = StratifiedKFold(n_splits=10, shuffle=True, random_state=0)
@@ -51,11 +51,13 @@ def ten_fold_cv(data_name):
         cmx = confusion_matrix(
             y_true=[1 if i == -1 else 0 for i in test_node_labels], y_pred=predict_labels)
         regression_weights.append(trainer.model.regression_weights)
+        experiment.log_metric(name=f'auc_fold_({i+1}/10)', value=auc_score)
         print("{0}-th fold's auc_score:{1}".format(i, auc_score))
         print(cmx)
         print()
 
     final_auc_score = np.mean(auc_scores)
+    experiment.log_metric("average_auc_10fold", final_auc_score)
     print("=======================================")
     print(f"averaged auc : {final_auc_score}")
     print("=======================================")
@@ -63,6 +65,7 @@ def ten_fold_cv(data_name):
 
 
 def robustness_experiments(
+        experiment,
         data_name,
         training_rates_list=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
         iter_num=30):
@@ -121,26 +124,36 @@ def robustness_experiments(
         all_auc_scores.append(np.mean(auc_scores))
         done_train_rate.append(train_rate)
         print(train_rate, ':', np.mean(auc_scores))
+        experiment.log_metric(f'rate_{train_rate}', np.mean(auc_scores))
     result_df = pd.DataFrame(
         all_auc_scores, index=done_train_rate, columns=['average_auc'])
     return result_df
 
 
-def inductive_learning_eval(data_name, rate_list=[0.1, 0.2, 0.3], iter_num=30):
-    rate_list = [0.1, 0.2, 0.3]
-    _train_all(data_name, rate_list, iter_num=iter_num)
-    new_args = get_args(data_name)
-    result_df, true_pred_dict = _eval_all(
-        data_name, rate_list, new_args, iter_num=iter_num)
+def inductive_learning_eval(
+        exp4_select,
+        experiment, data_name, rate_list=[0.1, 0.2, 0.3], iter_num=30):
+    if 'train' in exp4_select:
+        _train_all(experiment, data_name, rate_list, iter_num=iter_num)
+    if 'eval' in exp4_select:
+        new_args = get_args(data_name)
+        result_df, true_pred_dict = _eval_all(
+            experiment, data_name, rate_list, new_args, iter_num=iter_num)
+    else:
+        result_df = pd.DataFrame()
     return result_df
 
 
-def _train_all(data_name, rate_list, l1_lambda=0.0, l2_lambda=10e-4, iter_num=30):
+def _train_all(experiment, data_name, rate_list,
+               l1_lambda=0.0, l2_lambda=10e-4, iter_num=30):
+    inductive_model_dir = Path('./models/sgcn/')
+    inductive_model_dir.mkdir(parents=True, exist_ok=True)
+    trained_rate = []
     for rate in rate_list:
         for i in range(iter_num):
             print(f'{i}-th iteration')
-            inductive_model_path = Path(
-                './models/sgcn/') / f'{data_name}_{rate}_{i}th'
+            inductive_model_path = inductive_model_dir / \
+                f'{data_name}_{rate}_{i}th'
             args = get_args(data_name, rate=rate,
                             inductive_model_path=inductive_model_path,
                             l1_lambda=1.0)
@@ -149,9 +162,11 @@ def _train_all(data_name, rate_list, l1_lambda=0.0, l2_lambda=10e-4, iter_num=30
             trainer = SignedGCNTrainer(args, edges, nodes_dict)
             trainer.setup_dataset()
             trainer.create_and_train_model()
+        trained_rate.append(rate)
+        experiment.log_other('inductive_trained_rate', str(trained_rate))
 
 
-def _eval_all(data_name, rate_list, new_args, iter_num=30):
+def _eval_all(experiment, data_name, rate_list, new_args, iter_num=30):
     new_edges, new_nodes_dict = read_graph(new_args)
     X = np.array(pd.read_csv(new_args.features_path))
     result_df = pd.DataFrame()
@@ -181,6 +196,7 @@ def _eval_all(data_name, rate_list, new_args, iter_num=30):
         averaged_auc = np.mean(auc_scores)
         result_df = result_df.append(pd.io.json.json_normalize(
             {f'{data_name}_{rate}': averaged_auc}).T)
+        experiment.log_other(key=f'exp4_rate_{rate}', value=averaged_auc)
 
         bagging_pred_score = sum(bagging_pred_scores)/iter_num
         tmp_df = pd.DataFrame()

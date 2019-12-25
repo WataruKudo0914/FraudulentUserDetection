@@ -9,14 +9,19 @@ import torch.nn.functional as F
 import pandas as pd
 
 
-def ten_fold_cv(data_name):
+def ten_fold_cv(experiment, data_name):
     raw_dataset = get_dataset(data_name, edge_attribute='raw')
     sign_dataset = get_dataset(data_name, edge_attribute='sign')
     # raw_dataset
     rawedge_auc = _ten_fold_for_dataset(**raw_dataset)
     # signed dataset
     signed_auc = _ten_fold_for_dataset(**sign_dataset)
-    return {"raw_edge": rawedge_auc, "sign_edge": signed_auc}
+    result_dict = {
+        "average_auc_10fold(raw_edge)": rawedge_auc,
+        "average_auc_10fold(sign_edge)": signed_auc
+    }
+    experiment.log_others(result_dict)
+    return result_dict
 
 
 def _ten_fold_for_dataset(all_idx, known_labels,
@@ -103,6 +108,7 @@ def _ten_fold_for_dataset(all_idx, known_labels,
 
 
 def robustness_experiments(
+        experiment,
         data_name,
         training_rates_list=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9],
         iter_num=30):
@@ -112,6 +118,10 @@ def robustness_experiments(
         training_rates_list, iter_num, **raw_dataset)
     sign_results = _robustness_for_dataset(
         training_rates_list, iter_num, **sign_dataset)
+    for rate, raw_score, sign_score in zip(
+            training_rates_list, raw_results, sign_results):
+        experiment.log_metric(f'rate_{rate}(raw)', raw_score)
+        experiment.log_metric(f'rate_{rate}(sign)', sign_score)
     result_df = pd.DataFrame()
     result_df['raw_auc'] = raw_results
     result_df['sign_edge'] = sign_results
