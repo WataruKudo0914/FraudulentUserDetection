@@ -294,6 +294,11 @@ if __name__ == '__main__':
                     args = \
                         EasyDict({
                             "data_name": data_name,
+                            "source-col": 'user_id',
+                            "target-col": 'product_id',
+                            "weight-col": 'rating',
+                            "text-col": 'review',
+                            "init-data-name": None,
                             "alpha1": c1,
                             "beta1": c2,
                             "gamma1": c3,
