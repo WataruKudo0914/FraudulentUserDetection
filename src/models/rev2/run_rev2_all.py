@@ -3,7 +3,7 @@ import networkx as nx
 import numpy as np
 from pathlib import Path
 from src.models.rev2.rev2_arg_parser import arg_parser
-import easydict
+from easydict import EasyDict
 
 
 def preprocessing(args):
@@ -292,7 +292,7 @@ if __name__ == '__main__':
             for c3 in [0, 1, 2]:
                 for c4 in [0, 1, 2]:
                     args = \
-                        easydict({
+                        EasyDict({
                             "data_name": data_name,
                             "alpha1": c1,
                             "beta1": c2,
