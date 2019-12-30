@@ -81,17 +81,19 @@ def _ten_fold_for_dataset(all_idx, known_labels,
         for epoch in range(n_epochs):
             optimizer.zero_grad()
             logits = model.forward(g)
-            loss = F.cross_entropy(logits[train_idx], labels[train_idx])
+            labels_dev = labels.to(device)
+            loss = F.cross_entropy(logits[train_idx], labels_dev[train_idx])
             loss.backward()
 
             optimizer.step()
 
             train_auc = roc_auc_score(y_true=labels[train_idx].detach(
             ).numpy(), y_score=logits[train_idx].detach().numpy()[:, 1])
-            train_loss = F.cross_entropy(logits[train_idx], labels[train_idx])
+            train_loss = F.cross_entropy(
+                logits[train_idx], labels_dev[train_idx])
             val_auc = roc_auc_score(y_true=labels[val_idx].detach(
             ).numpy(), y_score=logits[val_idx].detach().numpy()[:, 1])
-            val_loss = F.cross_entropy(logits[val_idx], labels[val_idx])
+            val_loss = F.cross_entropy(logits[val_idx], labels_dev[val_idx])
 
             if val_auc >= best_auc:
                 best_auc = val_auc
@@ -196,7 +198,9 @@ def _robustness_for_dataset(train_rate_list, iter_num,
             for epoch in range(n_epochs):
                 optimizer.zero_grad()
                 logits = model.forward(g)
-                loss = F.cross_entropy(logits[train_idx], labels[train_idx])
+                labels_dev = labels.to(device)
+                loss = F.cross_entropy(
+                    logits[train_idx], labels_dev[train_idx])
                 loss.backward()
 
                 optimizer.step()
@@ -204,10 +208,11 @@ def _robustness_for_dataset(train_rate_list, iter_num,
                 train_auc = roc_auc_score(y_true=labels[train_idx].detach(
                 ).numpy(), y_score=logits[train_idx].detach().numpy()[:, 1])
                 train_loss = F.cross_entropy(
-                    logits[train_idx], labels[train_idx])
+                    logits[train_idx], labels_dev[train_idx])
                 val_auc = roc_auc_score(y_true=labels[val_idx].detach(
                 ).numpy(), y_score=logits[val_idx].detach().numpy()[:, 1])
-                val_loss = F.cross_entropy(logits[val_idx], labels[val_idx])
+                val_loss = F.cross_entropy(
+                    logits[val_idx], labels_dev[val_idx])
 
                 if val_auc >= best_auc:
                     best_auc = val_auc
