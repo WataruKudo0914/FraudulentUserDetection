@@ -12,7 +12,10 @@ def get_dataset(data_name, edge_attribute='raw'):
         else:
             dataset = get_amazon_dataset_signedge(data_name)
     elif data_name in ['otc', 'alpha', 'epinions']:
-        dataset = get_others_dataset(data_name, edge_attribute)
+        if edge_attribute == 'raw':
+            dataset = get_others_dataset_rawedge(data_name)
+        else:
+            dataset = get_others_dataset_signedge(data_name)
     return dataset
 
 
@@ -183,8 +186,153 @@ def get_amazon_dataset_signedge(data_name):
     return dataset
 
 
-def get_others_dataset(data_name, edge_attribute):
-    pass
+def get_others_dataset_rawedge(data_name):
+    data_dir = Path('./data/raw/') / data_name
+    epinions_network = pd.read_csv(data_dir / 'network.csv', header=None)
+    epinions_network.columns = ['src_raw', 'dst_raw', 'etype', 'time']
+    etype_encoder = LabelEncoder()
+    epinions_network['etype'] = etype_encoder.fit_transform(
+        epinions_network.etype)
+    epinions_gt = pd.read_csv(data_dir / 'gt.csv', header=None)
+    epinions_gt.columns = ['node_id_raw', 'label']
+    epinions_gt = epinions_gt.drop_duplicates('node_id_raw')
+    epinions_gt = epinions_gt.loc[epinions_gt.node_id_raw.isin(
+        set(epinions_network.src_raw) | set(epinions_network.dst_raw))]
+
+    # edge_normの計算
+    epinions_src_cnt = epinions_network.groupby(['src_raw', 'etype'])[
+        'time'].count().unstack(1, fill_value=0)
+
+    epinions_src_dist = pd.DataFrame(epinions_src_cnt.values/epinions_src_cnt.sum(1).values.reshape(-1, 1),
+                                     index=epinions_src_cnt.index,
+                                     columns=epinions_src_cnt.columns)
+
+    merged_network = pd.merge(epinions_network, epinions_src_dist.stack(
+    ).reset_index(), on=['src_raw', 'etype'])
+
+    label_encoder = LabelEncoder()
+    label_encoder.fit(np.hstack((merged_network.src_raw,
+                                 merged_network.dst_raw,
+                                 epinions_gt.node_id_raw)))
+
+    merged_network['src'] = label_encoder.transform(merged_network.src_raw)
+
+    merged_network['dst'] = label_encoder.transform(merged_network.dst_raw)
+
+    epinions_gt['node_id'] = label_encoder.transform(epinions_gt.node_id_raw)
+    epinions_gt['label'] = epinions_gt['label'].map(
+        lambda x: 1 if x == -1 else 0)
+
+    # padding
+    epinions_gt_padded = pd.merge(pd.DataFrame(np.arange(label_encoder.classes_.shape[0])), epinions_gt,
+                                  left_index=True, right_on='node_id', how='left').fillna(0.5).sort_values('node_id')
+
+    num_nodes = label_encoder.classes_.shape[0]
+    num_rels = merged_network.etype.unique().shape[0]
+    num_classes = epinions_gt.label.unique().shape[0]
+    labels = epinions_gt_padded['label'].values.astype(int).reshape(-1, 1)
+    all_idx = epinions_gt['node_id'].values
+
+    # edge type and normalization factor
+    edge_type = torch.from_numpy(merged_network['etype'].values)
+    edge_norm = torch.from_numpy(
+        merged_network[0].values.astype('float32')).unsqueeze(1)
+
+    labels = torch.from_numpy(labels).view(-1)
+
+    node_feature_df = pd.concat([get_dist(merged_network, 'src'), get_dist(
+        merged_network, 'dst')], 1).fillna(0).sort_index()
+    node_feature_array = node_feature_df.values.astype('float32')
+
+    known_labels = epinions_gt['label'].values
+    dataset = {
+        "num_nodes": num_nodes,
+        "num_rels": num_rels,
+        "num_classes": num_classes,
+        "labels": labels,
+        "all_idx": all_idx,
+        "edge_type": edge_type,
+        "edge_norm": edge_norm,
+        "labels": labels,
+        "node_feature_array": node_feature_array,
+        "known_labels": known_labels,
+        "merged_network": merged_network,
+    }
+    return dataset
+
+
+def get_others_dataset_signedge(data_name):
+    data_dir = Path('./data/processed/') / data_name
+    epinions_network = pd.read_csv(data_dir / 'network.csv')
+    epinions_network.columns = ['src_raw', 'dst_raw', 'etype']
+    etype_encoder = LabelEncoder()
+    epinions_network['etype'] = etype_encoder.fit_transform(
+        epinions_network.etype)
+    epinions_gt = pd.read_csv(data_dir / 'gt.csv')
+    epinions_gt.columns = ['node_id_raw', 'label']
+    epinions_gt = epinions_gt.drop_duplicates('node_id_raw')
+    epinions_network['time'] = 1
+
+    # edge_normの計算
+    epinions_src_cnt = epinions_network.groupby(['src_raw', 'etype'])[
+        'time'].count().unstack(1, fill_value=0)
+
+    epinions_src_dist = pd.DataFrame(
+        epinions_src_cnt.values/epinions_src_cnt.sum(1).values.reshape(-1, 1),
+        index=epinions_src_cnt.index,
+        columns=epinions_src_cnt.columns)
+
+    merged_network = pd.merge(epinions_network, epinions_src_dist.stack(
+    ).reset_index(), on=['src_raw', 'etype'])
+
+    label_encoder = LabelEncoder()
+    label_encoder.fit(np.hstack((merged_network.src_raw,
+                                 merged_network.dst_raw,
+                                 epinions_gt.node_id_raw)))
+
+    merged_network['src'] = label_encoder.transform(merged_network.src_raw)
+
+    merged_network['dst'] = label_encoder.transform(merged_network.dst_raw)
+
+    epinions_gt['node_id'] = label_encoder.transform(epinions_gt.node_id_raw)
+    epinions_gt['label'] = epinions_gt['label'].map(
+        lambda x: 1 if x == -1 else 0)
+
+    # padding
+    epinions_gt_padded = pd.merge(pd.DataFrame(np.arange(label_encoder.classes_.shape[0])), epinions_gt,
+                                  left_index=True, right_on='node_id', how='left').fillna(0.5).sort_values('node_id')
+
+    num_nodes = label_encoder.classes_.shape[0]
+    num_rels = merged_network.etype.unique().shape[0]
+    num_classes = epinions_gt.label.unique().shape[0]
+    labels = epinions_gt_padded['label'].values.astype(int).reshape(-1, 1)
+    all_idx = epinions_gt['node_id'].values
+
+    # edge type and normalization factor
+    edge_type = torch.from_numpy(merged_network['etype'].values)
+    edge_norm = torch.from_numpy(
+        merged_network[0].values.astype('float32')).unsqueeze(1)
+
+    labels = torch.from_numpy(labels).view(-1)
+
+    node_feature_df = pd.read_csv(
+        data_dir / 'node_feature.csv')
+    node_feature_array = node_feature_df.values.astype('float32')
+    known_labels = epinions_gt['label'].values
+    dataset = {
+        "num_nodes": num_nodes,
+        "num_rels": num_rels,
+        "num_classes": num_classes,
+        "labels": labels,
+        "all_idx": all_idx,
+        "edge_type": edge_type,
+        "edge_norm": edge_norm,
+        "labels": labels,
+        "node_feature_array": node_feature_array,
+        "known_labels": known_labels,
+        "merged_network": merged_network,
+    }
+    return dataset
 
 
 def get_dist(df, col):
