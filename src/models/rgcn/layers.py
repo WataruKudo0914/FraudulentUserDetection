@@ -63,6 +63,11 @@ class Model(nn.Module):
             layer(g)
         return g.ndata.pop('h')
 
+    def to(self, device):
+        super(Model, self).to(device)
+        self.features = self.features.to(device)
+        return self
+
 
 class RGCNLayer(nn.Module):
     def __init__(self, in_feat, out_feat, num_rels, num_bases=-1, bias=None,
