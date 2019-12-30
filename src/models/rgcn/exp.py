@@ -29,6 +29,9 @@ def _ten_fold_for_dataset(all_idx, known_labels,
                           edge_type, edge_norm,
                           num_classes, num_rels,
                           node_feature_array):
+    device = torch.device("cpu")
+    if torch.cuda.is_available():  # Try to use GPU if available
+        device = torch.device('cuda')
     # configurations
     n_hidden = [32, 16]  # number of hidden units
     n_bases = -1  # -1 # use number of relations as number of bases
@@ -65,6 +68,8 @@ def _ten_fold_for_dataset(all_idx, known_labels,
                       node_feature_array,
                       num_bases=n_bases,
                       num_hidden_layers=n_hidden_layers)
+        model = model.to(device)
+        g = g.to(device)
         # optimizer
         optimizer = torch.optim.Adam(
             model.parameters(), lr=lr, weight_decay=l2norm)
@@ -135,6 +140,10 @@ def _robustness_for_dataset(train_rate_list, iter_num,
                             edge_type, edge_norm,
                             num_classes, num_rels,
                             node_feature_array):
+    device = torch.device("cpu")
+    if torch.cuda.is_available():  # Try to use GPU if available
+        device = torch.device('cuda')
+
     all_auc_scores = []
 
     # configurations
@@ -174,6 +183,8 @@ def _robustness_for_dataset(train_rate_list, iter_num,
                           node_feature_array,
                           num_bases=n_bases,
                           num_hidden_layers=n_hidden_layers)
+            model = model.to(device)
+            g = g.to(device)
             # optimizer
             optimizer = torch.optim.Adam(
                 model.parameters(), lr=lr, weight_decay=l2norm)
