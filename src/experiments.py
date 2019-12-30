@@ -42,6 +42,9 @@ elif args.model_name == 'rgcn':
 elif args.model_name == 'rev2':
     from src.models import rev2
     model = rev2
+elif args.model_name == 'side':
+    from src.models import side
+    model = side
 else:
     raise ValueError
 
