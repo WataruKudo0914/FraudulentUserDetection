@@ -287,10 +287,11 @@ def iterate(args):
 if __name__ == '__main__':
     args = arg_parser()
     data_name = args.data_name
-    for c1 in [0, 1, 2]:
-        for c2 in [0, 1, 2]:
-            for c3 in [0, 1, 2]:
-                for c4 in [0, 1, 2]:
+    params = [0, 1, 2] if args.reversed == 0 else [2, 1, 0]
+    for c1 in params:
+        for c2 in params:
+            for c3 in params:
+                for c4 in params:
                     args = \
                         EasyDict({
                             "data_name": data_name,

@@ -17,5 +17,6 @@ def arg_parser():
     parser.add_argument("--gamma2", type=int)
     parser.add_argument("--gamma3", type=int)
     parser.add_argument("--init-data-name", type=str, default=None)
+    parser.add_argument("--reversed", type=int, default=0)
 
     return parser.parse_args()
