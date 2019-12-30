@@ -88,11 +88,11 @@ def _ten_fold_for_dataset(all_idx, known_labels,
             optimizer.step()
 
             train_auc = roc_auc_score(y_true=labels[train_idx].detach(
-            ).numpy(), y_score=logits[train_idx].detach().numpy()[:, 1])
+            ).numpy(), y_score=logits[train_idx].detach().cpu().numpy()[:, 1])
             train_loss = F.cross_entropy(
                 logits[train_idx], labels_dev[train_idx])
             val_auc = roc_auc_score(y_true=labels[val_idx].detach(
-            ).numpy(), y_score=logits[val_idx].detach().numpy()[:, 1])
+            ).numpy(), y_score=logits[val_idx].detach().cpu().numpy()[:, 1])
             val_loss = F.cross_entropy(logits[val_idx], labels_dev[val_idx])
 
             if val_auc >= best_auc:
@@ -107,7 +107,7 @@ def _ten_fold_for_dataset(all_idx, known_labels,
         print("==== Test Phase ====")
         model.eval()
         test_auc = roc_auc_score(y_true=labels[test_idx].detach().numpy(
-        ), y_score=best_auc_logits[test_idx].detach().numpy()[:, 1])
+        ), y_score=best_auc_logits[test_idx].detach().cpu().numpy()[:, 1])
         auc_scores.append(test_auc)
         print("test auc : {}".format(test_auc))
         print("=================")
@@ -206,11 +206,11 @@ def _robustness_for_dataset(train_rate_list, iter_num,
                 optimizer.step()
 
                 train_auc = roc_auc_score(y_true=labels[train_idx].detach(
-                ).numpy(), y_score=logits[train_idx].detach().numpy()[:, 1])
+                ).numpy(), y_score=logits[train_idx].detach().cpu().numpy()[:, 1])
                 train_loss = F.cross_entropy(
                     logits[train_idx], labels_dev[train_idx])
                 val_auc = roc_auc_score(y_true=labels[val_idx].detach(
-                ).numpy(), y_score=logits[val_idx].detach().numpy()[:, 1])
+                ).numpy(), y_score=logits[val_idx].detach().cpu().numpy()[:, 1])
                 val_loss = F.cross_entropy(
                     logits[val_idx], labels_dev[val_idx])
 
@@ -226,7 +226,7 @@ def _robustness_for_dataset(train_rate_list, iter_num,
             print("==== Test Phase ====")
             model.eval()
             test_auc = roc_auc_score(y_true=labels[test_idx].detach().numpy(
-            ), y_score=best_auc_logits[test_idx].detach().numpy()[:, 1])
+            ), y_score=best_auc_logits[test_idx].detach().cpu().numpy()[:, 1])
             auc_scores.append(test_auc)
             print("test auc : {}".format(test_auc))
             print("=================")
