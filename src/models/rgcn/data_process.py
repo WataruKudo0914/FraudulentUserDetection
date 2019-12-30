@@ -188,8 +188,10 @@ def get_amazon_dataset_signedge(data_name):
 
 def get_others_dataset_rawedge(data_name):
     data_dir = Path('./data/raw/') / data_name
-    epinions_network = pd.read_csv(data_dir / 'network.csv', header=None)
-    epinions_network.columns = ['src_raw', 'dst_raw', 'etype', 'time']
+    epinions_network = pd.read_csv(data_dir / 'network.csv', header=None,
+                                   index_col=0)
+    epinions_network.columns = ['src_raw',
+                                'dst_raw', 'etype', 'time', 'weight']
     etype_encoder = LabelEncoder()
     epinions_network['etype'] = etype_encoder.fit_transform(
         epinions_network.etype)
