@@ -195,7 +195,7 @@ def get_others_dataset_rawedge(data_name):
     etype_encoder = LabelEncoder()
     epinions_network['etype'] = etype_encoder.fit_transform(
         epinions_network.etype)
-    epinions_gt = pd.read_csv(data_dir / 'gt.csv', header=None)
+    epinions_gt = pd.read_csv(data_dir / 'gt.csv', header=None, index_col=0)
     epinions_gt.columns = ['node_id_raw', 'label']
     epinions_gt = epinions_gt.drop_duplicates('node_id_raw')
     epinions_gt = epinions_gt.loc[epinions_gt.node_id_raw.isin(
