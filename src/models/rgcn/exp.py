@@ -122,13 +122,15 @@ def robustness_experiments(
     raw_dataset = get_dataset(data_name, edge_attribute='raw')
     sign_dataset = get_dataset(data_name, edge_attribute='sign')
     raw_results = _robustness_for_dataset(
+        experiment, 'raw',
         training_rates_list, iter_num, **raw_dataset)
     sign_results = _robustness_for_dataset(
+        experiment, 'sign',
         training_rates_list, iter_num, **sign_dataset)
-    for rate, raw_score, sign_score in zip(
-            training_rates_list, raw_results, sign_results):
-        experiment.log_metric(f'rate_{rate}(raw)', raw_score)
-        experiment.log_metric(f'rate_{rate}(sign)', sign_score)
+    # for rate, raw_score, sign_score in zip(
+    #         training_rates_list, raw_results, sign_results):
+    #     experiment.log_metric(f'rate_{rate}(raw)', raw_score)
+    #     experiment.log_metric(f'rate_{rate}(sign)', sign_score)
     result_df = pd.DataFrame()
     result_df['raw_auc'] = raw_results
     result_df['sign_edge'] = sign_results
@@ -136,12 +138,14 @@ def robustness_experiments(
     return result_df
 
 
-def _robustness_for_dataset(train_rate_list, iter_num,
-                            all_idx, known_labels,
-                            labels, num_nodes, merged_network,
-                            edge_type, edge_norm,
-                            num_classes, num_rels,
-                            node_feature_array):
+def _robustness_for_dataset(
+        experiment, edge_attribute,
+        train_rate_list, iter_num,
+        all_idx, known_labels,
+        labels, num_nodes, merged_network,
+        edge_type, edge_norm,
+        num_classes, num_rels,
+        node_feature_array):
     device = torch.device("cpu")
     if torch.cuda.is_available():  # Try to use GPU if available
         device = torch.device('cuda')
@@ -230,6 +234,8 @@ def _robustness_for_dataset(train_rate_list, iter_num,
             auc_scores.append(test_auc)
             print("test auc : {}".format(test_auc))
             print("=================")
+        experiment.log_metric(
+            f'rate_{rate}({edge_attribute})', np.mean(auc_scores))
         all_auc_scores.append(np.mean(auc_scores))
 
     return all_auc_scores
