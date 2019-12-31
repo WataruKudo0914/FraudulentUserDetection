@@ -1,0 +1,8 @@
+,Dataset,Nodes,Edges,Benign Users,Fraudulent Users
+0,otc,5881,35592,136,180
+1,alpha,3783,24186,138,102
+2,amazon,271082,415390,2358,241
+3,epinions,4180,70227,726,70
+4,amazon_app,98401,465350,7998,194
+5,amazon_music,8901,37836,816,115
+6,amazon_home,93820,376802,7339,52
